@@ -1,68 +1,78 @@
-const canvas = document.getElementById("game");
-const ctx = canvas.getContext("2d");
-
-let lives = 3;
-let score = 0;
-let speed = 1.5;
-
-let equation = {};
-
-function newEquation() {
-  let a = Math.floor(Math.random() * 10) + 1;
-  let b = Math.floor(Math.random() * 10) + 1;
-  let op = ["+", "-", "*"][Math.floor(Math.random() * 3)];
-
-  let ans;
-  if (op === "+") ans = a + b;
-  if (op === "-") ans = a - b;
-  if (op === "*") ans = a * b;
-
-  equation = {
-    text: `${a} ${op} ${b}`,
-    answer: ans,
-    x: Math.random() * 300 + 40,
-    y: 0
-  };
+* {
+  box-sizing: border-box;
 }
 
-newEquation();
-
-function gameLoop() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  ctx.fillStyle = "#00ff66";
-  ctx.font = "24px monospace";
-  ctx.fillText(equation.text, equation.x, equation.y);
-
-  equation.y += speed;
-
-  if (equation.y > canvas.height) {
-    lives--;
-    document.getElementById("lives").innerText = lives;
-    newEquation();
-  }
-
-  if (lives <= 0) {
-    alert("GAME OVER\nScore: " + score);
-    location.reload();
-  }
-
-  requestAnimationFrame(gameLoop);
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: radial-gradient(circle at top, #001a0f, #000);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: "Courier New", monospace;
+  color: #00ff66;
 }
 
-gameLoop();
+/* Main Card */
+.game-container {
+  background: rgba(0, 0, 0, 0.85);
+  border: 2px solid #00ff66;
+  box-shadow: 0 0 25px #00ff66;
+  padding: 20px 25px;
+  width: 460px;
+  text-align: center;
+  border-radius: 12px;
+}
 
-document.getElementById("answer").addEventListener("keydown", function (e) {
-  if (e.key === "Enter") {
-    let userAns = parseInt(this.value);
+/* Title */
+h1 {
+  margin: 0;
+  font-size: 32px;
+  letter-spacing: 2px;
+  text-shadow: 0 0 12px #00ff66;
+}
 
-    if (userAns === equation.answer) {
-      score++;
-      speed += 0.1;
-      document.getElementById("score").innerText = score;
-      newEquation();
-    }
+.subtitle {
+  font-size: 14px;
+  opacity: 0.8;
+  margin-bottom: 12px;
+}
 
-    this.value = "";
-  }
-});
+/* HUD */
+.hud {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 18px;
+}
+
+/* Canvas */
+canvas {
+  background: #000;
+  border: 2px solid #00ff66;
+  border-radius: 6px;
+  box-shadow: inset 0 0 15px #00ff66;
+}
+
+/* Input */
+input {
+  margin-top: 15px;
+  width: 100%;
+  padding: 12px;
+  font-size: 18px;
+  text-align: center;
+  background: #000;
+  color: #00ff66;
+  border: 2px solid #00ff66;
+  border-radius: 6px;
+  outline: none;
+  box-shadow: 0 0 10px #00ff66;
+}
+
+input::placeholder {
+  color: #00aa44;
+}
+
+input:focus {
+  box-shadow: 0 0 20px #00ff66;
+}
