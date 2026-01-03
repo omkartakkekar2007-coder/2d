@@ -1,78 +1,93 @@
-* {
-  box-sizing: border-box;
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+
+const answerInput = document.getElementById("answer");
+
+let lives, score, speed, equation, running = false;
+
+function startGame() {
+  document.getElementById("startScreen").classList.add("hidden");
+  answerInput.disabled = false;
+  resetGame();
+  running = true;
+  gameLoop();
 }
 
-body {
-  margin: 0;
-  min-height: 100vh;
-  background: radial-gradient(circle at top, #001a0f, #000);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-family: "Courier New", monospace;
-  color: #00ff66;
+function resetGame() {
+  lives = 3;
+  score = 0;
+  speed = 1.5;
+  document.getElementById("lives").innerText = lives;
+  document.getElementById("score").innerText = score;
+  newEquation();
 }
 
-/* Main Card */
-.game-container {
-  background: rgba(0, 0, 0, 0.85);
-  border: 2px solid #00ff66;
-  box-shadow: 0 0 25px #00ff66;
-  padding: 20px 25px;
-  width: 460px;
-  text-align: center;
-  border-radius: 12px;
+function restartGame() {
+  document.getElementById("gameOverScreen").classList.add("hidden");
+  startGame();
 }
 
-/* Title */
-h1 {
-  margin: 0;
-  font-size: 32px;
-  letter-spacing: 2px;
-  text-shadow: 0 0 12px #00ff66;
+function newEquation() {
+  let a = Math.floor(Math.random() * 10) + 1;
+  let b = Math.floor(Math.random() * 10) + 1;
+  let ops = ["+", "-", "*", "/"];
+  let op = ops[Math.floor(Math.random() * ops.length)];
+
+  let ans;
+  if (op === "+") ans = a + b;
+  if (op === "-") ans = a - b;
+  if (op === "*") ans = a * b;
+  if (op === "/") {
+    ans = a;
+    b = 1 + Math.floor(Math.random() * 9);
+    a = ans * b;
+  }
+
+  equation = {
+    text: `${a} ${op} ${b}`,
+    answer: ans,
+    x: Math.random() * 250 + 80,
+    y: 0
+  };
 }
 
-.subtitle {
-  font-size: 14px;
-  opacity: 0.8;
-  margin-bottom: 12px;
+function gameLoop() {
+  if (!running) return;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "#00ff66";
+  ctx.font = "26px Courier New";
+  ctx.shadowColor = "#00ff66";
+  ctx.shadowBlur = 10;
+
+  ctx.fillText(equation.text, equation.x, equation.y);
+  equation.y += speed;
+
+  if (equation.y > canvas.height) {
+    lives--;
+    document.getElementById("lives").innerText = lives;
+    newEquation();
+  }
+
+  if (lives <= 0) {
+    running = false;
+    answerInput.disabled = true;
+    document.getElementById("finalScore").innerText = score;
+    document.getElementById("gameOverScreen").classList.remove("hidden");
+    return;
+  }
+
+  requestAnimationFrame(gameLoop);
 }
 
-/* HUD */
-.hud {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
-  font-size: 18px;
-}
-
-/* Canvas */
-canvas {
-  background: #000;
-  border: 2px solid #00ff66;
-  border-radius: 6px;
-  box-shadow: inset 0 0 15px #00ff66;
-}
-
-/* Input */
-input {
-  margin-top: 15px;
-  width: 100%;
-  padding: 12px;
-  font-size: 18px;
-  text-align: center;
-  background: #000;
-  color: #00ff66;
-  border: 2px solid #00ff66;
-  border-radius: 6px;
-  outline: none;
-  box-shadow: 0 0 10px #00ff66;
-}
-
-input::placeholder {
-  color: #00aa44;
-}
-
-input:focus {
-  box-shadow: 0 0 20px #00ff66;
-}
+answerInput.addEventListener("keydown", e => {
+  if (e.key === "Enter" && running) {
+    if (parseInt(answerInput.value) === equation.answer) {
+      score++;
+      speed += 0.15;
+      document.getElementById("score").innerText = score;
+      newEquation();
+    }
+    answerInput.value = "";
+  }
+});
