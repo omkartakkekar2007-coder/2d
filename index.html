@@ -7,25 +7,28 @@
 </head>
 <body>
 
-<div class="game-container">
-
+<!-- Start Screen -->
+<div id="startScreen" class="overlay">
   <h1>🧮 MATH DROP</h1>
-  <p class="subtitle">Solve fast before it hits the ground</p>
+  <p>Solve equations before they fall</p>
+  <button onclick="startGame()">START GAME</button>
+</div>
 
+<!-- Game Over Screen -->
+<div id="gameOverScreen" class="overlay hidden">
+  <h1>GAME OVER</h1>
+  <p>Your Score: <span id="finalScore">0</span></p>
+  <button onclick="restartGame()">RESTART</button>
+</div>
+
+<div class="game-container">
   <div class="hud">
     <div>❤️ Lives: <span id="lives">3</span></div>
     <div>⭐ Score: <span id="score">0</span></div>
   </div>
 
   <canvas id="game" width="420" height="520"></canvas>
-
-  <input 
-    type="text" 
-    id="answer" 
-    placeholder="Type answer & press Enter"
-    autocomplete="off"
-  >
-
+  <input type="text" id="answer" placeholder="Type answer & Enter" disabled>
 </div>
 
 <script src="script.js"></script>
